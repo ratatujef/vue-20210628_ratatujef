@@ -3,32 +3,25 @@ import { createApp } from './vendor/vue.esm-browser.js';
 const app = createApp({
   data() {
     return {
-      total: 0,
       firstNum: 0,
       secondNum: 0,
       func: '',
     };
   },
-  updated() {
-    this.calculate();
-  },
-  methods: {
-    calculate() {
+  computed: {
+    summ: function () {
       switch (this.func) {
         case 'sum':
-          this.total = this.firstNum + this.secondNum;
-          break;
+          return this.firstNum + this.secondNum;
         case 'subtract':
-          this.total = +this.firstNum - this.secondNum;
-          break;
+          return +this.firstNum - this.secondNum;
         case 'multiply':
-          this.total = this.firstNum * this.secondNum;
-          break;
+          return this.firstNum * this.secondNum;
         case 'divide':
-          this.total = this.firstNum / this.secondNum;
-          break;
+          return this.firstNum / this.secondNum;
+        default:
+          return 0;
       }
     },
   },
 }).mount('#app');
-// Создайте Vue приложение
