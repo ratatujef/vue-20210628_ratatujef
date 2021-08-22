@@ -8,11 +8,12 @@ export default defineComponent({
   },
   computed: {
     background() {
+      // return this.image ? `--bg-url: url(${this.image})` : '';
       return this.image ? `--bg-url: url(${this.image})` : '';
     },
   },
   template: `
-    <div class="meetup-cover" style='--bg-url: url(https://course-vue.javascript.ru/api/images/2)' :style="background">
+    <div class="meetup-cover" :style="background">
         <h1 v-if='title' class="meetup-cover__title">{{title}}</h1>
     </div>`,
 });
