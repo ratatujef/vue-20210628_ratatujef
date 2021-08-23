@@ -24,6 +24,9 @@ export default defineComponent({
         day: 'numeric',
       });
     },
+    meetupDateTime() {
+      return new Date(this.date).toISOString().substr(0, 10);
+    },
   },
   template: `
     <ul class="meetup-info">
@@ -37,7 +40,7 @@ export default defineComponent({
       </li>
       <li>
         <img class="icon meetup-info__icon" alt="icon" src="/assets/icons/icon-cal-lg.svg" />
-        <time :datetime="new Date(date).toISOString().substr(0, 10)">{{meetupDate}}</time>
+        <time :datetime="meetupDateTime">{{meetupDate}}</time>
       </li>
     </ul>`,
 });

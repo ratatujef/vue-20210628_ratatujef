@@ -5,5 +5,5 @@ export default defineComponent({
   props: {
     description: String,
   },
-  template: `<p v-if='description' class="meetup-description">{{description}}</p>`,
+  template: `<p v-if='description' class="meetup-description">{{ description }}</p>`,
 });
