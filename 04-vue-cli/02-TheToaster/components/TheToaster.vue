@@ -1,17 +1,17 @@
 <template>
   <div class="toasts">
     <div
-      v-for="msg in messages"
-      :key="msg"
+      v-for="(msg, inx) in messages"
+      :key="inx"
       :class="{
-        toast: true,
-        toast_success: msg.succes,
-        toast_error: msg.error,
+        toast: !!msg,
+        toast_success: msg && msg.success,
+        toast_error: msg && msg.error,
       }"
     >
-      <ui-icon v-if="msg.success" class="toast__icon" icon="check-circle" />
-      <ui-icon v-if="msg.error" class="toast__icon" icon="alert-circle" />
-      <span> {{ msg.msg }} </span>
+      <ui-icon v-if="msg && msg.success" class="toast__icon" icon="check-circle" />
+      <ui-icon v-if="msg && msg.error" class="toast__icon" icon="alert-circle" />
+      <span> {{ msg && msg.msg }} </span>
     </div>
   </div>
 </template>
@@ -30,9 +30,10 @@ export default {
   methods: {
     addMessage(msg, type) {
       const index = this.messages.push({ msg, [type]: true });
-      // setTimeout(() => {
-      //   this.messages.splice(index - 1, 1);
-      // }, 1000);
+      setTimeout(() => {
+        this.messages[index - 1] = undefined;
+        // this.messages.splice(index - 1, 1);
+      }, 5000);
     },
     success(msg) {
       this.addMessage(msg, 'success');
