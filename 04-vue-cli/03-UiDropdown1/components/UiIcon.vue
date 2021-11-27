@@ -30,7 +30,7 @@ export default {
     icon: {
       type: String,
       required: true,
-      validate: (name) => Object.keys(icons).includes(name),
+      validator: (name) => Object.keys(icons).includes(name),
     },
   },
 
