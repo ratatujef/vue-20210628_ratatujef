@@ -1,18 +1,22 @@
 <template>
-  <div class="dropdown dropdown_opened">
-    <button type="button" class="dropdown__toggle dropdown__toggle_icon">
-      <ui-icon icon="tv" class="dropdown__icon" />
-      <span>Title</span>
+  <div class="dropdown" :class="{ dropdown_opened: !collaplsed }">
+    <button type="button" class="dropdown__toggle" :class="{ dropdown__toggle_icon: hasIcon }" @click="toggleList">
+      <ui-icon v-if="selected?.icon" :icon="selected.icon" class="dropdown__icon" />
+      <span>{{ modelValue ? selected?.text : title }}</span>
     </button>
 
-    <div class="dropdown__menu" role="listbox">
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 1
-      </button>
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 2
+    <div v-show="!collaplsed" class="dropdown__menu" role="listbox">
+      <button
+        v-for="(opt, indx) in options"
+        :key="indx"
+        class="dropdown__item"
+        :class="{ dropdown__item_icon: hasIcon }"
+        role="option"
+        type="button"
+        @click="select(opt.value)"
+      >
+        <ui-icon v-if="opt.icon" :icon="opt.icon" class="dropdown__icon" />
+        {{ opt.text }}
       </button>
     </div>
   </div>
@@ -23,8 +27,41 @@ import UiIcon from './UiIcon';
 
 export default {
   name: 'UiDropdown',
-
   components: { UiIcon },
+  props: {
+    options: {
+      type: Array,
+      required: true,
+    },
+    modelValue: {},
+    title: {
+      type: String,
+      required: true,
+    },
+  },
+  emits: ['update:modelValue'],
+  data() {
+    return {
+      collaplsed: true,
+    };
+  },
+  computed: {
+    selected() {
+      return this.options.find((el) => el.value === this.modelValue);
+    },
+    hasIcon() {
+      return this.options.some((el) => el.icon);
+    },
+  },
+  methods: {
+    toggleList() {
+      this.collaplsed = !this.collaplsed;
+    },
+    select(newValue) {
+      this.collaplsed = true;
+      this.$emit('update:modelValue', newValue);
+    },
+  },
 };
 </script>
 
