@@ -25,6 +25,10 @@
         {{ opt.text }}
       </button>
     </div>
+
+    <select v-model="selectModel" style="display: none">
+      <option v-for="option in options" :key="option.value" :value="option.value">{{ option.text }}</option>
+    </select>
   </div>
 </template>
 
