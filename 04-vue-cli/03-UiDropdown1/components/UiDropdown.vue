@@ -1,4 +1,10 @@
 <template>
+  <select v-show="false" @change="$emit('update:modelValue', $event.target.value)">
+    <option v-for="(opt, indx) in options" :key="indx" :value="opt.value" :selected="opt.value === selected?.value">
+      {{ opt.text }}
+    </option>
+  </select>
+
   <div class="dropdown" :class="{ dropdown_opened: !collaplsed }">
     <button type="button" class="dropdown__toggle" :class="{ dropdown__toggle_icon: hasIcon }" @click="toggleList">
       <ui-icon v-if="selected?.icon" :icon="selected.icon" class="dropdown__icon" />
