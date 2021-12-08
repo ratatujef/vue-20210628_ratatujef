@@ -1,22 +1,28 @@
 <template>
-  <div class="dropdown" :class="{ dropdown_opened: isOpen }">
-    <button type="button" class="dropdown__toggle" :class="{ dropdown__toggle_icon: hasIcons }" @click="toggleOpen">
+  <select v-show="false" @change="$emit('update:modelValue', $event.target.value)">
+    <option v-for="(opt, indx) in options" :key="indx" :value="opt.value" :selected="opt.value === selected?.value">
+      {{ opt.text }}
+    </option>
+  </select>
+
+  <div class="dropdown" :class="{ dropdown_opened: !collaplsed }">
+    <button type="button" class="dropdown__toggle" :class="{ dropdown__toggle_icon: hasIcon }" @click="toggleList">
       <ui-icon v-if="selected?.icon" :icon="selected.icon" class="dropdown__icon" />
       <span>{{ modelValue ? selected?.text : title }}</span>
     </button>
 
-    <div v-show="isOpen" class="dropdown__menu" role="listbox">
+    <div v-show="!collaplsed" class="dropdown__menu" role="listbox">
       <button
-        v-for="option in options"
-        :key="option.value"
+        v-for="(opt, indx) in options"
+        :key="indx"
         class="dropdown__item"
-        :class="{ dropdown__item_icon: hasIcons }"
+        :class="{ dropdown__item_icon: hasIcon }"
         role="option"
         type="button"
-        @click="select(option.value)"
+        @click="select(opt.value)"
       >
-        <ui-icon v-if="option.icon" :icon="option.icon" class="dropdown__icon" />
-        {{ option.text }}
+        <ui-icon v-if="opt.icon" :icon="opt.icon" class="dropdown__icon" />
+        {{ opt.text }}
       </button>
     </div>
 
@@ -31,63 +37,39 @@ import UiIcon from './UiIcon';
 
 export default {
   name: 'UiDropdown',
-
   components: { UiIcon },
-
   props: {
-    modelValue: {},
-
     options: {
       type: Array,
       required: true,
-      validator: (options) =>
-        options.every(
-          (option) => typeof option === 'object' && option !== null && 'value' in option && 'text' in option,
-        ),
     },
-
+    modelValue: {},
     title: {
       type: String,
       required: true,
     },
   },
-
   emits: ['update:modelValue'],
-
   data() {
     return {
-      isOpen: false,
+      collaplsed: true,
     };
   },
-
   computed: {
     selected() {
-      return this.options.find((option) => option.value === this.modelValue);
+      return this.options.find((el) => el.value === this.modelValue);
     },
-
-    hasIcons() {
-      return this.options.some((option) => option.icon);
-    },
-
-    selectModel: {
-      get() {
-        return this.modelValue;
-      },
-
-      set(value) {
-        this.select(value);
-      },
+    hasIcon() {
+      return this.options.some((el) => el.icon);
     },
   },
-
   methods: {
-    toggleOpen() {
-      this.isOpen = !this.isOpen;
+    toggleList() {
+      this.collaplsed = !this.collaplsed;
     },
-
-    select(value) {
-      this.isOpen = false;
-      this.$emit('update:modelValue', value);
+    select(newValue) {
+      this.collaplsed = true;
+      this.$emit('update:modelValue', newValue);
     },
   },
 };
