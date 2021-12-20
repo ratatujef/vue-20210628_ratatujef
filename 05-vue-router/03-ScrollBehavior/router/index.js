@@ -46,12 +46,11 @@ export const router = createRouter({
     if (savedPosition) {
       return savedPosition;
     }
-    if (to.meta.saveScrollPosition) return { top: window.pageYOffset, left: window.pageXOffset };
-    else {
-      return {
-        top: 0,
-        left: 0,
-      };
-    }
+    if (to.meta.saveScrollPosition && from.meta.saveScrollPosition) return false;
+
+    return {
+      top: 0,
+      left: 0,
+    };
   },
 });
