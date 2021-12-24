@@ -1,6 +1,6 @@
 <template>
   <router-link v-if="isRoute" class="link"><slot /></router-link>
-  <a v-else class="link"><slot /></a>
+  <component :is="$attrs.tag" v-else class="link"><slot /></component>
 </template>
 
 <script>

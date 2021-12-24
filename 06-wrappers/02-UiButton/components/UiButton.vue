@@ -10,13 +10,11 @@ export default {
       type: String,
       default: 'button',
     },
-    variant: String,
+    variant: {
+      type: String,
+      default: 'secondary',
+    },
     block: Boolean,
-  },
-  data() {
-    return {
-      at: this.$attrs,
-    };
   },
   computed: {
     isSubmit() {
@@ -28,7 +26,6 @@ export default {
     },
     classes() {
       return {
-        button_secondary: !this.variant,
         [`button_${this.variant}`]: !!this.variant,
         button: true,
         button_block: this.block,

@@ -14,9 +14,7 @@
           </div>
         </ui-form-group>
         <div class="form__buttons">
-          <button type="submit" class="button button_primary button_block" @click.prevent="redirectTo('loginPage')">
-            Войти
-          </button>
+          <button type="submit" class="button button_primary button_block">Войти</button>
         </div>
         <div class="form__append">
           Нет аккаунта? <router-link to="/register" class="link">Зарегистрируйтесь</router-link>
