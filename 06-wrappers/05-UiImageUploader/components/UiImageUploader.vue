@@ -1,8 +1,15 @@
 <template>
   <div class="image-uploader">
-    <label class="image-uploader__preview image-uploader__preview-loading" style="--bg-url: url('/link.jpeg')">
-      <span class="image-uploader__text">Загрузить изображение</span>
-      <input type="file" accept="image/*" class="image-uploader__input" />
+    <label class="image-uploader__preview" :style="background" @click="checkImageUploaded">
+      <span class="image-uploader__text">{{ message }}</span>
+      <input
+        ref="input"
+        v-bind="$attrs"
+        type="file"
+        accept="image/*"
+        class="image-uploader__input"
+        @change="inputHandler($event.target)"
+      />
     </label>
   </div>
 </template>
@@ -10,13 +17,37 @@
 <script>
 export default {
   name: 'UiImageUploader',
+  inheritAttrs: false,
+  props: ['preview', 'uploader'],
+  emits: ['select', 'remove', 'upload', 'error'],
+  computed: {
+    background() {
+      return this.preview ? { '--bg-url': `url(${this.preview})` } : '';
+    },
+    message() {
+      if (this.preview) return 'Удалить изображение';
+      else return 'Загрузить изображение';
+    },
+  },
+  methods: {
+    checkImageUploaded(event) {
+      if (this.preview) {
+        event.preventDefault();
+        this.$emit('remove');
+        this.$refs.input.value = '';
+      }
+    },
+    inputHandler(target) {
+      this.$emit('select', target.files[0]);
+      this.uploader(target.files[0])
+        .then((result) => this.$emit('upload', result))
+        .catch((error) => this.$emit('error', error));
+    },
+  },
 };
 </script>
 
 <style scoped>
-.image-uploader {
-}
-
 .image-uploader__input {
   opacity: 0;
   height: 0;
