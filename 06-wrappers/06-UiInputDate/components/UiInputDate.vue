@@ -1,11 +1,10 @@
 <template>
-  <!-- <ui-input
+  <ui-input
     v-bind="$attrs"
     :model-value="updatedValue"
     :type="type"
     @change="$emit('update:modelValue', $event.target.valueAsNumber)"
-  > -->
-  <ui-input :model-value="value" :type="type" @input="handleInput">
+  >
     <template v-for="slot in Object.keys($slots)" #[slot]>
       <slot :name="slot" />
     </template>
