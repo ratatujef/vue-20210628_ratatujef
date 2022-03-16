@@ -88,10 +88,10 @@ const talkLanguageOptions = [
 export default {
   name: 'MeetupAgendaItemForm',
 
+  components: { UiIcon, UiFormGroup, UiInput, UiDropdown },
+
   agendaItemTypeOptions,
   talkLanguageOptions,
-
-  components: { UiIcon, UiFormGroup, UiInput, UiDropdown },
 
   props: {
     agendaItem: {
