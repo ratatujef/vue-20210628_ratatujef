@@ -15,10 +15,6 @@
           <ui-input v-model="localMeetup.description" multiline rows="3" name="description" />
         </ui-form-group>
         <ui-form-group label="Изображение">
-          <!--
-               Предлагается сохранять файл для будущей загрузки во временное поле imageToUpload
-               и передавать в объекте со всеми данными формы
-          -->
           <ui-image-uploader
             name="image"
             :preview="meetup.image"
