@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <ui-form-group v-if="isTalk || isOther" label="Тема">
+    <ui-form-group v-if="isTalk || isOther" :label="title">
       <ui-input v-model="localItem.title" name="title" @change="updateItem" />
     </ui-form-group>
     <ui-form-group v-if="isTalk" label="Докладчик">
@@ -102,7 +102,8 @@ export default {
   emits: ['remove', 'update:agendaItem'],
   data() {
     return {
-      localItem: Object.assign(this.agendaItem, {}),
+      localItem: Object.assign({}, this.agendaItem),
+      starts: this.agendaItem.startsAt,
     };
   },
   computed: {
@@ -111,6 +112,36 @@ export default {
     },
     isOther() {
       return this.localItem.type === 'other';
+    },
+    title() {
+      return this.isTalk ? 'Тема' : 'Заголовок';
+    },
+  },
+  watch: {
+    'localItem.startsAt'(newValue, oldValue) {
+      if (!/([0-1]\d|2[0-3]):[0-5]\d/.test(newValue)) {
+        return;
+      }
+      // Разделяем время на часы и минуты и переводим в минуты
+      const timeToMinutes = (time) => {
+        const [h, m] = time.split(':').map((x) => parseInt(x, 10));
+        return h * 60 + m;
+      };
+      const newMinutes = timeToMinutes(newValue);
+      const oldMinutes = timeToMinutes(oldValue);
+      const oldEndsAtMinutes = timeToMinutes(this.localItem.endsAt);
+      // Считаем изменение времени в минутах
+      const deltaMinutes = newMinutes - oldMinutes;
+      // Считаем новое значение
+      const newEndsAtMinutes = (oldEndsAtMinutes + deltaMinutes + 24 * 60) % (24 * 60);
+      // Пересчитываем обратно в часы и минуты
+      const hours = Math.floor(newEndsAtMinutes / 60)
+        .toString()
+        .padStart(2, '0');
+      const minutes = Math.floor(newEndsAtMinutes % 60)
+        .toString()
+        .padStart(2, '0');
+      this.localItem.endsAt = `${hours}:${minutes}`;
     },
   },
   methods: {
