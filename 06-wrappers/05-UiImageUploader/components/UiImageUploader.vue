@@ -121,9 +121,6 @@ export default {
 </script>
 
 <style scoped>
-.image-uploader {
-}
-
 .image-uploader__input {
   opacity: 0;
   height: 0;

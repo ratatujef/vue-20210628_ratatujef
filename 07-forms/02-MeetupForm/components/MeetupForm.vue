@@ -1,5 +1,5 @@
 <template>
-  <form class="meetup-form" @submit.prevent="handleSubmit">
+  <form class="meetup-form" @submit.prevent="submitHandler">
     <div class="meetup-form__content">
       <fieldset class="meetup-form__section">
         <ui-form-group label="Название">
@@ -17,7 +17,7 @@
         <ui-form-group label="Изображение">
           <ui-image-uploader
             name="image"
-            :preview="localMeetup.image"
+            :preview="meetup.image"
             @select="localMeetup.imageToUpload = $event"
             @remove="localMeetup.imageToUpload = null"
           />
@@ -25,12 +25,13 @@
       </fieldset>
 
       <h3 class="meetup-form__agenda-title">Программа</h3>
+
       <meetup-agenda-item-form
-        v-for="(agendaItem, index) in localMeetup.agenda"
-        :key="agendaItem.id"
-        v-model:agenda-item="localMeetup.agenda[index]"
+        v-for="(item, inx) in localMeetup.agenda"
+        :key="item.id"
+        v-model:agenda-item="localMeetup.agenda[inx]"
         class="meetup-form__agenda-item"
-        @remove="removeAgendaItem(index)"
+        @remove="removeAgendaItem(item)"
       />
 
       <div class="meetup-form__append">
@@ -43,17 +44,12 @@
     <div class="meetup-form__aside">
       <div class="meetup-form__aside-stick">
         <!-- data-test атрибуты используются для поиска нужного элемента в тестах, не удаляйте их -->
-        <ui-button
-          class="meetup-form__aside-button"
-          block
-          data-test="cancel"
-          variant="secondary"
-          @click="$emit('cancel')"
+        <ui-button variant="secondary" block class="meetup-form__aside-button" data-test="cancel" @click="cancelHandler"
           >Отмена</ui-button
         >
-        <ui-button variant="primary" block class="meetup-form__aside-button" type="submit" data-test="submit">{{
-          submitText
-        }}</ui-button>
+        <ui-button variant="primary" block class="meetup-form__aside-button" data-test="submit" type="submit">
+          {{ submitText }}
+        </ui-button>
       </div>
     </div>
   </form>
@@ -61,7 +57,6 @@
 
 <script>
 import { cloneDeep } from 'lodash-es';
-
 import MeetupAgendaItemForm from './MeetupAgendaItemForm';
 import UiButton from './UiButton';
 import UiFormGroup from './UiFormGroup';
@@ -93,30 +88,28 @@ export default {
       default: '',
     },
   },
-
-  emits: ['submit', 'cancel'],
-
+  emits: ['cancel', 'submit'],
   data() {
     return {
       localMeetup: cloneDeep(this.meetup),
     };
   },
-
   methods: {
-    addAgendaItem() {
-      const newItem = createAgendaItem();
-      if (this.localMeetup.agenda.length) {
-        newItem.startsAt = this.localMeetup.agenda[this.localMeetup.agenda.length - 1].endsAt;
-      }
-      this.localMeetup.agenda.push(newItem);
+    cancelHandler() {
+      this.$emit('cancel');
     },
-
-    removeAgendaItem(index) {
-      this.localMeetup.agenda.splice(index, 1);
-    },
-
-    handleSubmit() {
+    submitHandler() {
       this.$emit('submit', cloneDeep(this.localMeetup));
+    },
+    addAgendaItem() {
+      const count = this.localMeetup.agenda.push(createAgendaItem());
+      const prevItem = count > 1 && this.localMeetup.agenda[count - 2];
+      const current = this.localMeetup.agenda[count - 1];
+      if (prevItem && prevItem.endsAt) current.startsAt = prevItem.endsAt;
+    },
+    removeAgendaItem(el) {
+      const index = this.localMeetup.agenda.indexOf(el);
+      this.localMeetup.agenda.splice(index, 1);
     },
   },
 };

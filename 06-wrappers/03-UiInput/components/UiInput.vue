@@ -1,13 +1,26 @@
 <template>
-  <div class="input-group input-group_icon input-group_icon-left input-group_icon-right">
-    <div class="input-group__icon">
-      <img class="icon" alt="icon" />
+  <div :class="componentClasses">
+    <div v-if="$slots['left-icon']" class="input-group__icon input-group_icon-left">
+      <slot name="left-icon" />
     </div>
 
-    <input ref="input" class="form-control form-control_rounded form-control_sm" />
-
-    <div class="input-group__icon">
-      <img class="icon" alt="icon" />
+    <component
+      :is="inputType"
+      :ref="inputType"
+      :value="modelValue"
+      :class="inputClasses"
+      v-bind="$attrs"
+      @input="$emit('update:modelValue', $event.target.value)"
+    />
+    <!-- почему-то через v-model + proxy не работает cм комменты (( 
+      <component
+      :is="inputType"
+      :ref="inputType"
+      v-model="modelValueProxy"
+      :class="inputClasses"
+    /> -->
+    <div v-if="$slots['right-icon']" class="input-group__icon input-group_icon-right">
+      <slot name="right-icon" />
     </div>
   </div>
 </template>
@@ -15,6 +28,47 @@
 <script>
 export default {
   name: 'UiInput',
+  inheritAttrs: false,
+  props: {
+    small: Boolean,
+    rounded: Boolean,
+    multiline: Boolean,
+    modelValue: String,
+  },
+  emits: ['update:modelValue'],
+  computed: {
+    // modelValueProxy: {
+    //   get() {
+    //     return this.modelValue;
+    //   },
+    //   set(value) {
+    //     this.$emit('update:modelValue', value);
+    //   },
+    // },
+    inputType() {
+      return this.multiline ? 'textarea' : 'input';
+    },
+    inputClasses() {
+      return {
+        'form-control_sm': this.small,
+        'form-control_rounded': this.rounded,
+        'form-control': true,
+      };
+    },
+    componentClasses() {
+      return {
+        'input-group': true,
+        'input-group_icon': this.$slots['right-icon'] || this.$slots['left-icon'],
+        'input-group_icon-right': this.$slots['right-icon'],
+        'input-group_icon-left': this.$slots['left-icon'],
+      };
+    },
+  },
+  methods: {
+    focus() {
+      this.$refs[this.inputType].focus();
+    },
+  },
 };
 </script>
 

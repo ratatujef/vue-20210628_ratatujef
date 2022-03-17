@@ -5,24 +5,24 @@
     </button>
 
     <ui-form-group>
-      <ui-dropdown v-model="localAgendaItem.type" title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
+      <ui-dropdown v-model="localItem.type" title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
     </ui-form-group>
 
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <ui-form-group label="Начало">
-          <ui-input v-model="localAgendaItem.startsAt" type="time" placeholder="00:00" name="startsAt" />
+          <ui-input v-model="localItem.startsAt" type="time" placeholder="00:00" name="startsAt" />
         </ui-form-group>
       </div>
       <div class="agenda-item-form__col">
         <ui-form-group label="Окончание">
-          <ui-input v-model="localAgendaItem.endsAt" type="time" placeholder="00:00" name="endsAt" />
+          <ui-input v-model="localItem.endsAt" type="time" placeholder="00:00" name="endsAt" />
         </ui-form-group>
       </div>
     </div>
 
-    <ui-form-group v-for="(spec, field) in schema" :key="field" :label="spec.label">
-      <component :is="spec.component" v-model="localAgendaItem[field]" v-bind="spec.props" />
+    <ui-form-group v-for="(spec, field) in current" :key="field" :label="spec.label">
+      <component :is="spec.component" v-model="localItem[field]" v-bind="spec.props" @change="updateItem" />
     </ui-form-group>
   </fieldset>
 </template>
@@ -162,37 +162,20 @@ export default {
       required: true,
     },
   },
-
-  emits: ['update:agendaItem', 'remove'],
+  emits: ['remove', 'update:agendaItem'],
 
   data() {
     return {
-      localAgendaItem: { ...this.agendaItem },
+      localItem: { ...this.agendaItem },
     };
   },
-
   computed: {
-    startsAt() {
-      return this.localAgendaItem.startsAt;
-    },
-
-    schema() {
-      return agendaItemFormSchemas[this.localAgendaItem.type];
+    current() {
+      return agendaItemFormSchemas[this.localItem.type];
     },
   },
-
   watch: {
-    localAgendaItem: {
-      deep: true,
-      handler() {
-        this.$emit('update:agendaItem', { ...this.localAgendaItem });
-      },
-    },
-
-    startsAt(newValue, oldValue) {
-      // Если время не введено или введено не до конца, браузер вернёт пустую строку (при поддержке time)
-      // Но Safari не поддерживает input[type=time] :(
-      // Придётся проверять
+    'localItem.startsAt'(newValue, oldValue) {
       if (!/([0-1]\d|2[0-3]):[0-5]\d/.test(newValue)) {
         return;
       }
@@ -203,7 +186,7 @@ export default {
       };
       const newMinutes = timeToMinutes(newValue);
       const oldMinutes = timeToMinutes(oldValue);
-      const oldEndsAtMinutes = timeToMinutes(this.localAgendaItem.endsAt);
+      const oldEndsAtMinutes = timeToMinutes(this.localItem.endsAt);
       // Считаем изменение времени в минутах
       const deltaMinutes = newMinutes - oldMinutes;
       // Считаем новое значение
@@ -215,7 +198,12 @@ export default {
       const minutes = Math.floor(newEndsAtMinutes % 60)
         .toString()
         .padStart(2, '0');
-      this.localAgendaItem.endsAt = `${hours}:${minutes}`;
+      this.localItem.endsAt = `${hours}:${minutes}`;
+    },
+  },
+  methods: {
+    updateItem() {
+      this.$emit('update:agendaItem', this.localItem);
     },
   },
 };
