@@ -29,10 +29,16 @@ export default {
       ],
     };
   },
-  updated() {
-    const wrapper = this.$refs.container;
-    const { clientHeight, scrollHeight } = wrapper;
-    wrapper.scrollTo(0, scrollHeight - clientHeight);
+  watch: {
+    messages: {
+      handler() {
+        const wrapper = this.$refs.container;
+        const { clientHeight, scrollHeight } = wrapper;
+        wrapper.scrollTo(0, scrollHeight - clientHeight);
+      },
+      deep: true,
+      flush: 'post',
+    },
   },
 
   methods: {
