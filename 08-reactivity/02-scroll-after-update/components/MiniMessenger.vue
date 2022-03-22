@@ -1,6 +1,6 @@
 <template>
   <main class="mini-messenger">
-    <ul class="messages">
+    <ul ref="container" class="messages">
       <li v-for="message in messages" :key="message.id" class="message">
         {{ message.text }}
       </li>
@@ -18,7 +18,6 @@ let lastId = 0;
 
 export default {
   name: 'MiniMessenger',
-
   data() {
     return {
       newMessage: '',
@@ -29,6 +28,11 @@ export default {
         { id: lastId++, text: 'Forth message' },
       ],
     };
+  },
+  updated() {
+    const wrapper = this.$refs.container;
+    const { clientHeight, scrollHeight } = wrapper;
+    wrapper.scrollTo(0, scrollHeight - clientHeight);
   },
 
   methods: {
