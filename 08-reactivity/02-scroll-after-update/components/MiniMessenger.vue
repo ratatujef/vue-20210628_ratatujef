@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { nextTick } from '@vue/runtime-core';
 let lastId = 0;
 
 export default {
@@ -29,29 +30,24 @@ export default {
       ],
     };
   },
-  watch: {
-    messages: {
-      handler() {
-        const wrapper = this.$refs.container;
-        const { clientHeight, scrollHeight } = wrapper;
-        wrapper.scrollTo(0, scrollHeight - clientHeight);
-      },
-      deep: true,
-      flush: 'post',
-    },
-  },
 
   methods: {
     async handleSendSubmit() {
       await this.send();
     },
-
+    scrollDown() {
+      const wrapper = this.$refs.container;
+      const { clientHeight, scrollHeight } = wrapper;
+      wrapper.scrollTo(0, scrollHeight - clientHeight);
+    },
     async send() {
       this.messages.push({
         id: lastId++,
         text: this.newMessage,
       });
       this.newMessage = '';
+      await nextTick();
+      this.scrollDown();
     },
   },
 };
