@@ -43,9 +43,9 @@ export default {
 
     setData(sensors) {
       this.sensors = {};
-      for (const sensorId in sensors) {
-        this.sensors[sensorId] = { ...sensors[sensorId] };
-      }
+      Object.keys(sensors).forEach((el) => {
+        this.sensors[el] = { ...sensors[el] };
+      });
     },
   },
 };
